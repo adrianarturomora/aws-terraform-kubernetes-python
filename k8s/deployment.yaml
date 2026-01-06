@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: digit-checker
+  labels:
+    app: digit-checker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: digit-checker
+  template:
+    metadata:
+      labels:
+        app: digit-checker
+    spec:
+      containers:
+        - name: digit-checker
+          image: 128764427270.dkr.ecr.us-east-1.amazonaws.com/digit-checker:latest
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
